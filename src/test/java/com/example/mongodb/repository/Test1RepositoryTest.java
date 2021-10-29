@@ -34,8 +34,8 @@ class Test1RepositoryTest {
 
     @PostConstruct
     void init() {
-//        primaryTemplate.createCollection("Test1");
-//        secondaryTemplate.createCollection("Test2");
+        primaryTemplate.createCollection("Test1");
+        secondaryTemplate.createCollection("Test2");
     }
 
     @PreDestroy
