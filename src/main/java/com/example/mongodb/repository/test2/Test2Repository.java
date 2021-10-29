@@ -1,5 +1,6 @@
 package com.example.mongodb.repository.test2;
 
+import com.example.mongodb.domain.Test2;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
