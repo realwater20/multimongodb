@@ -1,4 +1,4 @@
-package com.example.mongodb.repository.test2;
+package com.example.mongodb.domain;
 
 import lombok.Builder;
 import lombok.Data;
