@@ -3,6 +3,7 @@ package com.example.mongodb.config;
 import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
@@ -18,6 +19,8 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.transaction.ChainedTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
 
@@ -52,14 +55,23 @@ public class MongodbConfig {
         return mongoTemplate;
     }
 
+    // 기존 트랜잭션 설정1
     @Primary
     @Bean("primaryTransactionManager")
     public MongoTransactionManager primaryTransactionManager() {
         return new MongoTransactionManager(new SimpleMongoClientDatabaseFactory(mongodb_uri1));
     }
 
+    // 기존 트랜잭션 설정2
     @Bean("secondaryTransactionManager")
     public MongoTransactionManager secondaryTransactionManager() {
         return new MongoTransactionManager(new SimpleMongoClientDatabaseFactory(mongodb_uri2));
+    }
+
+    // 멀티 트랜잭션 추가 new
+    @Bean("multiTransactionManager")
+    public PlatformTransactionManager multiTransactionManager(@Qualifier("primaryTransactionManager") PlatformTransactionManager primaryTransactionManager,
+                                                              @Qualifier("secondaryTransactionManager") PlatformTransactionManager secondaryTransactionManager) {
+        return new ChainedTransactionManager(primaryTransactionManager, secondaryTransactionManager);
     }
 }

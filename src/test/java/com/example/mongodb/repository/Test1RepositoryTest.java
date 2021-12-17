@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 class Test1RepositoryTest {
@@ -34,21 +37,9 @@ class Test1RepositoryTest {
     @Autowired
     private Test2Repository test2Repository;
 
-    @PostConstruct
-    void init() {
-//        primaryTemplate.createCollection("Test1");
-//        secondaryTemplate.createCollection("Test2");
-    }
-
-    @PreDestroy
-    void delete() {
-        primaryTemplate.dropCollection("Test1");
-        secondaryTemplate.dropCollection("Test2");
-    }
-
     @Transactional(transactionManager = "primaryTransactionManager")
     @Test
-    void test() {
+    void test1() {
         Test1 test1 = Test1.builder().title("test").build();
         test1Repository.save(test1);
 
@@ -74,4 +65,19 @@ class Test1RepositoryTest {
 
         test2Repository.deleteAll();
     }
+
+    @Transactional(transactionManager = "multiTransactionManager")
+    @Test
+    void test() {
+        // primaryTransactionManager로 처리
+        Test1 test1 = Test1.builder().title("test1").build();
+        test1Repository.save(test1);
+        assertEquals("test1", test1Repository.findById(test1.getId()).get().getTitle());
+
+        // secondaryTransactionManager로 처리
+        Test2 test2 = Test2.builder().title("test2").build();
+        test2Repository.save(test2);
+        assertEquals("test2", test2Repository.findById(test2.getId()).get().getTitle());
+    }
+
 }
