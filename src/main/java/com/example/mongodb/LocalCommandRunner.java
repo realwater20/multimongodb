@@ -23,8 +23,8 @@ public class LocalCommandRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        primaryMongoTemplate.createCollection("Test1");
-//        secondaryMongoTemplate.createCollection("Test2");
+        primaryMongoTemplate.createCollection("Test1");
+        secondaryMongoTemplate.createCollection("Test2");
     }
 
 }
